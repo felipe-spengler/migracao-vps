@@ -3,9 +3,8 @@
 # Execute este script via SSH na nova VPS
 
 # Configurações (AJUSTE CONFORME SEUS NOVOS NOMES DE CONTAINER)
-CONTAINER_DB="nome_do_novo_container_postgres"
-CONTAINER_N8N="nome_do_novo_container_n8n"
-CONTAINER_EVOLUTION="nome_do_novo_container_evolution"
+CONTAINER_N8N="n8n-l8w8wko08w44wso0sgwsowsg-022131141575"
+CONTAINER_EVOLUTION="evolution-api-l8w8wko08w44wso0sgwsowsg-022131150586"
 DB_USER="seu_usuario_banco"
 DB_NAME="seu_nome_banco"
 
