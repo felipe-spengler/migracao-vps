@@ -4,40 +4,46 @@ Este guia descreve o processo de migração de sua stack EasyPanel da VPS antiga
 
 ## Visão Geral
 
-1.  **Exportar Configuração**: Salvar a estrutura do projeto do EasyPanel (JSON).
-2.  **Backup de Dados (Script)**: Gerar dumps dos bancos de dados e copiar arquivos de volume importantes.
-3.  **Repositório Git**: Versionar os scripts e configurações.
-4.  **Nova VPS**: Preparar o ambiente e importar configurações.
-5.  **Restaurar Dados (Script)**: Reaplicar os backups na nova infraestrutura.
+1.  **Mapear Configuração**: Como o Coolify usa uma estrutura diferente, vamos criar um `docker-compose.yml` que represente seus serviços.
+2.  **Backup de Dados (Script)**: Gerar dumps dos bancos de dados e copiar arquivos de volume importantes (Procedimento igual).
+3.  **Repositório Git**: Versionar o `docker-compose.yml` e scripts.
+4.  **Nova VPS (Coolify)**: Importar o projeto via Docker Compose (Git ou File).
+5.  **Restaurar Dados**: Reaplicar os backups nos volumes criados pelo Coolify.
 
-## Passo 1: Exportar Configuração do EasyPanel
+## Passo 1: Criar o Docker Compose (Migração para Coolify)
 
-1.  Acesse o painel do **EasyPanel** na VPS antiga.
-2.  Vá até o **Projeto** que contém seus serviços.
-3.  Procure a opção de **Settings** (Configurações) do projeto.
-4.  Clique em **Export Project** (ou copie o JSON de configuração).
-5.  Salve este conteúdo num arquivo chamado `easypanel-project.json` na pasta deste repositório.
+O EasyPanel exporta um JSON proprietário, mas o Coolify adora **Docker Compose**.
+Crie um arquivo `docker-compose.yml` neste repositório. Ele deve conter seus serviços:
+- Postgres (Banco)
+- Redis
+- n8n
+- Evolution API
 
-## Passo 2: Backup dos Dados (Executar na VPS Antiga)
+> **Dica**: No Coolify, você pode simplesmente conectar este repositório Git. O Coolify vai ler o `docker-compose.yml` e subir tudo automaticamente.
+
+## Passo 2: Backup dos Dados (VPS Antiga - EasyPanel)
 
 Utilize o script `backup_data.sh` incluído neste repositório.
 Este script deve ser ajustado para os nomes dos seus containers.
 
 > **Atenção**: O Git não é ideal para arquivos gigantes (GBs). Se seus backups forem pequenos (<100MB), pode usar o Git. Se forem grandes, use `scp` ou transfira via nuvem (S3/Drive).
 
-## Passo 3: Configurar a Nova VPS
+## Passo 3: Configurar a Nova VPS (Coolify)
 
-1.  Instale o Docker e o EasyPanel na nova VPS.
-2.  Crie um projeto vazio.
-3.  Utilize a opção **Import** e use o arquivo `easypanel-project.json` (ou configure manualmente baseado nele).
-4.  **Importante**: Não inicie os serviços ainda, ou pare-os logo após o deploy inicial para restaurar os dados.
+1.  Acesse seu Coolify.
+2.  Crie um novo **Project** -> **Environment**.
+3.  Escolha **Resource** -> **Docker Compose**.
+4.  Você pode colar o conteúdo do `docker-compose.yml` que criamos ou conectar este repositório do Git.
+5.  **Variáveis de Ambiente**: Antes de iniciar (deploy), vá em cada serviço no Coolify e adicione as variáveis críticas, principalmente `N8N_ENCRYPTION_KEY` que deve ser IGUAL à antiga.
 
 ## Passo 4: Restaurar Dados (Executar na Nova VPS)
 
-1.  Clone este repositório na nova VPS.
-2.  Coloque os arquivos de backup gerados (`dump.sql`, `volumes.tar.gz`) na pasta `backups/`.
-3.  Execute o script `restore_data.sh`.
-4.  Reinicie os containers no EasyPanel.
+1.  No Coolify, depois do primeiro deploy (mesmo que vazio), ele cria os containers.
+2.  Descubra os nomes dos containers ou IDs rodando `docker ps` no terminal da nova VPS.
+3.  Clone este repositório na nova VPS (ou apenas copie o script e o backup).
+4.  Edite o `restore_data.sh` para usar os **novos nomes** de container do Coolify (geralmente algo como `uuid-postgres`).
+5.  Execute o script `restore_data.sh`.
+6.  Reinicie os serviços no painel do Coolify (Redeploy).
 
 ## Detalhes Específicos por Serviço
 

@@ -1,0 +1,81 @@
+version: '3.8'
+
+services:
+  postgres:
+    image: postgres:14-alpine
+    container_name: postgres
+    restart: always
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: "4c0933d4b7205df0d561"
+      POSTGRES_DB: automacao
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    networks:
+      - migration-net
+
+  redis:
+    image: redis:alpine
+    container_name: redis
+    restart: always
+    command: redis-server --requirepass "94dd25c5bf372906d8fb" --appendonly yes
+    volumes:
+      - redis_data:/data
+    networks:
+      - migration-net
+
+  n8n:
+    image: n8nio/n8n:latest
+    container_name: n8n
+    restart: always
+    environment:
+      - DB_TYPE=postgresdb
+      - DB_POSTGRESDB_HOST=postgres
+      - DB_POSTGRESDB_PORT=5432
+      - DB_POSTGRESDB_DATABASE=automacao
+      - DB_POSTGRESDB_USER=postgres
+      - DB_POSTGRESDB_PASSWORD="4c0933d4b7205df0d561"
+      - N8N_ENCRYPTION_KEY=${N8N_ENCRYPTION_KEY}
+      - N8N_HOST=techinteligente.site
+      - WEBHOOK_URL=https://techinteligente.site/
+      - VUE_APP_URL_BASE_API=https://techinteligente.site/
+    ports:
+      - "5678:5678"
+    volumes:
+      - n8n_data:/home/node/.n8n
+    depends_on:
+      - postgres
+      - redis
+    networks:
+      - migration-net
+
+  evolution-api:
+    image: atendai/evolution-api:latest
+    container_name: evolution-api
+    restart: always
+    environment:
+      - SERVER_URL=https://evolution.techinteligente.site
+      - DATABASE_ENABLED=true
+      - DATABASE_CONNECTION_URI=postgresql://postgres:4c0933d4b7205df0d561@postgres:5432/automacao
+      - REDIS_ENABLED=true
+      - REDIS_URI=redis://:94dd25c5bf372906d8fb@redis:6379/1
+    ports:
+      - "8080:8080"
+    volumes:
+      - evolution_instances:/evolution/instances
+    depends_on:
+      - postgres
+      - redis
+    networks:
+      - migration-net
+
+volumes:
+  postgres_data:
+  n8n_data:
+  redis_data:
+  evolution_instances:
+
+
+networks:
+  migration-net:
+    driver: bridge
