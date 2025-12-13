@@ -60,7 +60,7 @@ services:
       - REDIS_ENABLED=true
       - REDIS_URI=redis://:94dd25c5bf372906d8fb@redis:6379/1
     ports:
-      - "8080:8080"
+      - "8082:8080"
     volumes:
       - evolution_instances:/evolution/instances
     depends_on:
