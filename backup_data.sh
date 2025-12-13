@@ -3,12 +3,13 @@
 # Execute este script via SSH na sua VPS antiga
 
 # Configurações (AJUSTE CONFORME SEUS NOMES DE CONTAINER)
-# Use 'docker ps' para ver os nomes corretos
-CONTAINER_DB="nome_do_container_postgres" # Ex: project-banco-1
-CONTAINER_N8N="nome_do_container_n8n"
-CONTAINER_EVOLUTION="nome_do_container_evolution"
-DB_USER="seu_usuario_banco"
-DB_NAME="seu_nome_banco"
+# No EasyPanel, geralmente é: projeto-servico-1
+# Baseado no seu projeto 'automacao', os prováveis nomes são:
+CONTAINER_DB="automacao-evolution-db-1"       # Ou apenas 'automacao-postgres-1', verifique com 'docker ps'
+CONTAINER_N8N="automacao-n8n-1"
+CONTAINER_EVOLUTION="automacao-evolution-1"
+DB_USER="postgres"
+DB_NAME="automacao"
 
 # Criar pasta de backup
 mkdir -p ./backups
