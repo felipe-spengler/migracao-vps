@@ -64,8 +64,7 @@ services:
       - WAHA_DASHBOARD_ENABLED=true
       - WAHA_DASHBOARD_USERNAME=admin
       - WAHA_DASHBOARD_PASSWORD=techinteligente
-      # Se quiser chave de API para os endpoints:
-      # - WAHA_API_KEY=techinteligente
+      - WAHA_API_KEY=techinteligente
     ports:
       - "3000:3000"
     labels:
