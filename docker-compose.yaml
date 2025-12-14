@@ -41,14 +41,9 @@ services:
       - VUE_APP_URL_BASE_API=https://techinteligente.site/
     ports:
       - "5678:5678"
-    labels:
-      - traefik.enable=true
-      - traefik.http.routers.n8n.rule=Host(`techinteligente.site`)
-      - traefik.http.routers.n8n.entrypoints=https
-      - traefik.http.routers.n8n.tls.certresolver=letsencrypt
-      - traefik.http.services.n8n.loadbalancer.server.port=5678
     volumes:
       - n8n_data:/home/node/.n8n
+      - waha_data:/home/node/.waha
     depends_on:
       - postgres
       - redis
@@ -61,7 +56,10 @@ services:
     restart: always
     environment:
       - WHATSAPP_DEFAULT_ENGINE=NOWEB
+      - WAHA_MEDIA_STORAGE=LOCAL
+      - WAHA_FILES_PATH=/app/.waha/files
       - WAHA_DOWNLOAD_MEDIA=true
+      - WAHA_WEBHOOK_FILES=true
       - WAHA_DASHBOARD_ENABLED=true
       - WAHA_DASHBOARD_USERNAME=admin
       - WAHA_DASHBOARD_PASSWORD=techinteligente
@@ -74,16 +72,12 @@ services:
       - traefik.http.routers.waha.entrypoints=https
       - traefik.http.routers.waha.tls.certresolver=letsencrypt
       - traefik.http.services.waha.loadbalancer.server.port=3000
-      # Waha precisa de sticky sessions para o QR Code também
       - traefik.http.services.waha.loadbalancer.sticky.cookie=true
       - traefik.http.services.waha.loadbalancer.sticky.cookie.secure=true
     volumes:
       - waha_data:/app/.waha
-    depends_on:
-      - postgres
-      - redis
-  # networks: # Removendo duplicata, ja foi declarado acima
-  #   - migration-net
+    networks:
+      - migration-net
 
 volumes:
   postgres_data:
