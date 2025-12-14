@@ -55,36 +55,35 @@ services:
     networks:
       - migration-net
 
-  evolution-api:
-    image: atendai/evolution-api:v2.2.2
-    container_name: evolution-api
+  waha:
+    image: devlikeapro/waha
+    container_name: waha
     restart: always
     environment:
-      - SERVER_URL=https://api.techinteligente.site
-      - DATABASE_ENABLED=true
-      - DATABASE_CONNECTION_URI=postgresql://postgres:4c0933d4b7205df0d561@postgres:5432/evolution
-      - DATABASE_PROVIDER=postgresql
-      - CONFIG_SESSION_PHONE_VERSION=2.3000.1031060024
-      - AUTHENTICATION_API_KEY=4c0933d4b7205df0d561
-      - REDIS_ENABLED=true
-      - REDIS_URI=redis://:94dd25c5bf372906d8fb@redis:6379/1
+      - WHATSAPP_DEFAULT_ENGINE=NOWEB
+      - WAHA_DASHBOARD_ENABLED=true
+      - WAHA_DASHBOARD_USERNAME=admin
+      - WAHA_DASHBOARD_PASSWORD=techinteligente
+      # Se quiser chave de API para os endpoints:
+      # - WAHA_API_KEY=techinteligente
     ports:
-      - "8082:8080"
+      - "3000:3000"
     labels:
       - traefik.enable=true
-      - traefik.http.routers.evolution.rule=Host(`api.techinteligente.site`)
-      - traefik.http.routers.evolution.entrypoints=https
-      - traefik.http.routers.evolution.tls.certresolver=letsencrypt
-      - traefik.http.services.evolution.loadbalancer.server.port=8080
-      - traefik.http.services.evolution.loadbalancer.sticky.cookie=true
-      - traefik.http.services.evolution.loadbalancer.sticky.cookie.secure=true
+      - traefik.http.routers.waha.rule=Host(`api.techinteligente.site`)
+      - traefik.http.routers.waha.entrypoints=https
+      - traefik.http.routers.waha.tls.certresolver=letsencrypt
+      - traefik.http.services.waha.loadbalancer.server.port=3000
+      # Waha precisa de sticky sessions para o QR Code também
+      - traefik.http.services.waha.loadbalancer.sticky.cookie=true
+      - traefik.http.services.waha.loadbalancer.sticky.cookie.secure=true
     volumes:
-      - evolution_instances:/evolution/instances
+      - waha_data:/app/.waha
     depends_on:
       - postgres
       - redis
-    networks:
-      - migration-net
+  # networks: # Removendo duplicata, ja foi declarado acima
+  #   - migration-net
 
 volumes:
   postgres_data:
