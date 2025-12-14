@@ -56,7 +56,7 @@ services:
       - migration-net
 
   evolution-api:
-    image: atendai/evolution-api:latest
+    image: atendai/evolution-api:v2.2.2
     container_name: evolution-api
     restart: always
     environment:
@@ -75,6 +75,8 @@ services:
       - traefik.http.routers.evolution.entrypoints=https
       - traefik.http.routers.evolution.tls.certresolver=letsencrypt
       - traefik.http.services.evolution.loadbalancer.server.port=8080
+      - traefik.http.services.evolution.loadbalancer.sticky.cookie=true
+      - traefik.http.services.evolution.loadbalancer.sticky.cookie.secure=true
     volumes:
       - evolution_instances:/evolution/instances
     depends_on:
