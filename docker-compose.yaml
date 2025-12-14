@@ -43,7 +43,7 @@ services:
       - "5678:5678"
     volumes:
       - n8n_data:/home/node/.n8n
-      - waha_data:/home/node/.waha
+      - waha_data:/home/node/.waha:ro
     depends_on:
       - postgres
       - redis
@@ -83,7 +83,6 @@ volumes:
   postgres_data:
   n8n_data:
   redis_data:
-  evolution_instances:
 
 
 networks:
