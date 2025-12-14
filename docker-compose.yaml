@@ -61,6 +61,7 @@ services:
     restart: always
     environment:
       - WHATSAPP_DEFAULT_ENGINE=NOWEB
+      - WAHA_DOWNLOAD_MEDIA=true
       - WAHA_DASHBOARD_ENABLED=true
       - WAHA_DASHBOARD_USERNAME=admin
       - WAHA_DASHBOARD_PASSWORD=techinteligente
