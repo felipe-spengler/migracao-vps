@@ -64,6 +64,7 @@ services:
       - DATABASE_ENABLED=true
       - DATABASE_CONNECTION_URI=postgresql://postgres:4c0933d4b7205df0d561@postgres:5432/evolution
       - DATABASE_PROVIDER=postgresql
+      - CONFIG_SESSION_PHONE_VERSION=2.3000.1031060024
       - AUTHENTICATION_API_KEY=4c0933d4b7205df0d561
       - REDIS_ENABLED=true
       - REDIS_URI=redis://:94dd25c5bf372906d8fb@redis:6379/1
