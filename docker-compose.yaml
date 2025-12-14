@@ -41,6 +41,12 @@ services:
       - VUE_APP_URL_BASE_API=https://techinteligente.site/
     ports:
       - "5678:5678"
+    labels:
+      - traefik.enable=true
+      - traefik.http.routers.n8n.rule=Host(`techinteligente.site`)
+      - traefik.http.routers.n8n.entrypoints=https
+      - traefik.http.routers.n8n.tls.certresolver=letsencrypt
+      - traefik.http.services.n8n.loadbalancer.server.port=5678
     volumes:
       - n8n_data:/home/node/.n8n
     depends_on:
@@ -54,7 +60,7 @@ services:
     container_name: evolution-api
     restart: always
     environment:
-      - SERVER_URL=https://evolution.techinteligente.site
+      - SERVER_URL=https://api.techinteligente.site
       - DATABASE_ENABLED=true
       - DATABASE_CONNECTION_URI=postgresql://postgres:4c0933d4b7205df0d561@postgres:5432/evolution
       - DATABASE_PROVIDER=postgresql
@@ -62,6 +68,12 @@ services:
       - REDIS_URI=redis://:94dd25c5bf372906d8fb@redis:6379/1
     ports:
       - "8082:8080"
+    labels:
+      - traefik.enable=true
+      - traefik.http.routers.evolution.rule=Host(`api.techinteligente.site`)
+      - traefik.http.routers.evolution.entrypoints=https
+      - traefik.http.routers.evolution.tls.certresolver=letsencrypt
+      - traefik.http.services.evolution.loadbalancer.server.port=8080
     volumes:
       - evolution_instances:/evolution/instances
     depends_on:
